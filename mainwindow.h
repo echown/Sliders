@@ -30,12 +30,15 @@ private slots:
 
     void on_yMax_valueChanged(int value);
 
+    void on_slice_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
     float hMin;
     float hMax;
     float sMin;
     float sMax;
+    float zValue;
     int yMin;
     int yMax;
 };

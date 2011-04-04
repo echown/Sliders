@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     sMax = 1.0f;
     yMin = 30;
     yMax = 230;
+    zValue = 0.75f;
     ui->colwheel->show();
     update();
 }
@@ -25,10 +26,15 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::update(){
+    // we draw by using a QImage - turn it into a Pixmap, then put it on a label
     QImage img(200, 200, QImage::Format_RGB32);
-    QTextStream out(stdout);
-    //out << "Here\n";
     bool display;
+    /* Our color wheel has a radius of 100.  Loop through the rectangle
+      looking for pixels within that radius. For good pixels we calculate
+      the H value based on the angle from the origin.  The S value is
+      set according to the distance / radius, and the V is fixed (but
+      settable by a slider).
+     */
     for (int i = 0; i < 200; i++)
     {
         for (int j = 0; j < 200; j++)
@@ -43,6 +49,7 @@ void MainWindow::update(){
                 {
                     h = 1.0f + h;
                 }
+                // Since H is an angle the math is modulo.
                 if (hMax > hMin)
                 {
                     if (hMin > h || hMax < h)
@@ -60,13 +67,11 @@ void MainWindow::update(){
                 QColor c;
                 if (display)
                 {
-                    c.setHsvF(h, s, 0.75f);
+                    c.setHsvF(h, s, zValue);
                 } else{
-                    c.setHsvF(0.0, 0.0, 0.0f);
+                    c.setHsvF(0.0, 0.0, 1.0f);
                 }
                 img.setPixel(i, j, c.rgb());
-            } else{
-                //img.setPixel(i, j, 0);
             }
         }
     }
@@ -109,4 +114,10 @@ void MainWindow::on_yMin_valueChanged(int value)
 void MainWindow::on_yMax_valueChanged(int value)
 {
     yMax = value;
+}
+
+void MainWindow::on_slice_valueChanged(int value)
+{
+    zValue = (float)value / 100.0f;
+    update();
 }
